@@ -32,38 +32,42 @@ public class Tringle_work : MonoBehaviour {
         }
         return 9;
     }
+    GameObject closest = null;
+    void Update()
+    {
+        //nearest food
+        GameObject []
+        gos;
+        gos = GameObject.FindGameObjectsWithTag("Food");
+        float distance = Mathf.Infinity;
+    Vector3 position = transform.position;
+        foreach (GameObject go in gos)
+        {
+            Vector3 diff = go.transform.position - position;
+    float curDistance = diff.sqrMagnitude;
+            if (curDistance<distance)
+            {
+                closest = go;
+                distance = curDistance;
 
+            }
+        }
+    }
 
-    void Update () {
+    void FixedUpdate () {
 
 
 
         startEatTime = startEatTime - Time.deltaTime;
         
-        //nearest food
-        GameObject[] gos;
-        gos = GameObject.FindGameObjectsWithTag("Food");
-        GameObject closest = null;
-        float distance = Mathf.Infinity;
-        Vector3 position = transform.position;
-        foreach (GameObject go in gos)
-        {
-            Vector3 diff = go.transform.position - position;
-            float curDistance = diff.sqrMagnitude;
-            if (curDistance < distance)
-            {
-                closest = go;
-                distance = curDistance;
 
-                    Quaternion rotation = Quaternion.LookRotation
-                    (closest.transform.position - transform.position, transform.TransformDirection(Vector3.up));
-                    Quaternion soon = new Quaternion(0, 0, rotation.z, rotation.w);
-                    Quaternion now = this.transform.rotation;
-                    transform.rotation = Quaternion.Lerp(now, soon, 0.1f);
-                    transform.position = Vector3.Lerp(transform.position, closest.transform.position, 0.1f);
-                
-            }
-        }
 
+
+        Quaternion rotation = Quaternion.LookRotation(closest.transform.position - transform.position, transform.TransformDirection(Vector3.up));
+        Quaternion soon = new Quaternion(0, 0, rotation.z, rotation.w);
+        Quaternion now = this.transform.rotation;
+        transform.rotation = Quaternion.Lerp(now, soon, 0.02f);
+        transform.position = Vector3.Lerp(transform.position, closest.transform.position, 0.1f);
+        closest = null;
     }
 }
