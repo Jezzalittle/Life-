@@ -5,11 +5,13 @@ public class Tringle_work : MonoBehaviour {
 
     public int[] aiMovement;
     public GameObject spices;
-    public float startEatTime = 5.0f;
     private int Desition = 5;
-    private bool foodFound;
+    private bool foodFound = false;
     private Quaternion rotNow, rotSoon;
     private Vector3 posNow, posSoon;
+    public float movementSpeed = 0.05f;
+    private Vector3 velocity = Vector3.zero;
+
     GameObject closest = null;
     
     public int decisionMaking(int eat, int move, int brawl, int reproduce, int dontMove)
@@ -35,12 +37,14 @@ public class Tringle_work : MonoBehaviour {
         {
             return 4;
         }
+       
         return 9;
     }
 
     void Start()
     {
-        posNow = transform.position;
+
+    posNow = transform.position;
         posSoon = transform.position;
         rotNow = transform.rotation;
         rotSoon = transform.rotation;
@@ -54,7 +58,7 @@ public class Tringle_work : MonoBehaviour {
         {
             Desition = decisionMaking(20, 20, 20, 20, 20);
         }
-        if(Desition == 0)
+       else if(Desition == 0)
         {
             //Eat
             if(foodFound == false)
@@ -63,31 +67,33 @@ public class Tringle_work : MonoBehaviour {
                 foodFound = true;
             }
         }
-        if (Desition == 1)
+        else if (Desition == 1)
         {
             //Move
             Desition = 5;
         }
-        if (Desition == 2)
+      else  if (Desition == 2)
         {
             //Brawl
             Desition = 5;
         }
-        if (Desition == 3)
+       else if (Desition == 3)
         {
             //Reproduce
             Desition = 5;
         }
-        if (Desition == 4)
+      else if (Desition == 4)
         {
             //Dont Move
             Desition = 5;
         }
 
-        Debug.Log(Desition);
-    
-      transform.rotation = Quaternion.Lerp(rotNow, rotSoon, 0.5f);
-      transform.position = Vector3.Lerp(posNow, posSoon, 0.5f);
+        Debug.Log(posSoon);
+        Debug.Log(posNow);
+
+
+       // transform.rotation = Quaternion.Lerp(rotNow, rotSoon, movementSpeed * Time.time);
+      transform.position = Vector3.SmoothDamp(transform.position , posSoon, ref velocity, movementSpeed,1); ;
     }
 
 
@@ -110,12 +116,15 @@ public class Tringle_work : MonoBehaviour {
             }
 
         }
+
         float totx = closest.transform.position.x - spices.transform.position.x;
         float toty = closest.transform.position.y - spices.transform.position.y;
         rotSoon.Set(0, 0, Mathf.Atan2(toty, totx), 0);
         rotNow = transform.rotation;
         posSoon = closest.transform.position;
         posNow = transform.position;
+        Debug.Log(posSoon);
+        Debug.Log(rotSoon);
     }
 
 
