@@ -5,12 +5,13 @@ public class Tringle_work : MonoBehaviour {
 
     public int[] aiMovement;
     public GameObject spices;
-    private int Desition = 5;
+    private int decision = 5;
     private bool foodFound = false;
-    private Quaternion rotNow, rotSoon;
     private Vector3 posNow, posSoon;
     public float movementSpeed = 0.05f;
     private Vector3 velocity = Vector3.zero;
+    private int continueCommitingChance = 100, StopCommitingChance = 0;
+    private float gameTimer = 3.0f;
 
     GameObject closest = null;
     
@@ -41,61 +42,88 @@ public class Tringle_work : MonoBehaviour {
         return 9;
     }
 
+    public int desistionCommitment(int stay, int stop)
+    {
+        int tempRand = Random.Range(1, 100);
+        if(tempRand < stay)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+
     void Start()
     {
 
-    posNow = transform.position;
+        posNow = transform.position;
         posSoon = transform.position;
-        rotNow = transform.rotation;
-        rotSoon = transform.rotation;
-    }
 
+
+    }
 
     void Update()
     {
- 
-        if (Desition == 5)
+        if (gameTimer > 0)
         {
-            Desition = decisionMaking(20, 20, 20, 20, 20);
-        }
-       else if(Desition == 0)
-        {
-            //Eat
-            if(foodFound == false)
+            if (decision == 5)
             {
-                findFood();
-                foodFound = true;
+                decision = decisionMaking(20, 20, 20, 20, 20);
             }
-        }
-        else if (Desition == 1)
-        {
-            //Move
-            Desition = 5;
-        }
-      else  if (Desition == 2)
-        {
-            //Brawl
-            Desition = 5;
-        }
-       else if (Desition == 3)
-        {
-            //Reproduce
-            Desition = 5;
-        }
-      else if (Desition == 4)
-        {
-            //Dont Move
-            Desition = 5;
-        }
+            else if (decision == 0)
+            {
+                //Eat
+                if (foodFound == false)
+                {
+                    findFood();
+                    foodFound = true;
+                }
+            }
+            else if (decision == 1)
+            {
+                //Move
+                decision = 5;
+            }
+            else if (decision == 2)
+            {
+                //Brawl
+                decision = 5;
+            }
+            else if (decision == 3)
+            {
+                //Reproduce
+                decision = 5;
+            }
+            else if (decision == 4)
+            {
+                //Dont Move
+                decision = 5;
+            }
 
-        Debug.Log(posSoon);
-        Debug.Log(posNow);
+            if (decision != 5)
+            {
+                int commitmentCheck = desistionCommitment(continueCommitingChance, StopCommitingChance);
+                if (commitmentCheck == 0)
+                {
+                    continueCommitingChance =- 1;
+                    StopCommitingChance =+ 1;
+                }
+                else
+                {
+                    decision = 5;
+                }
+            }
+            Debug.Log(decision);
+            gameTimer = 3.0f;
+        }
+        Debug.Log(gameTimer);
+      gameTimer =- Time.deltaTime;
+      transform.position = Vector3.SmoothDamp(transform.position , posSoon, ref velocity, movementSpeed,4);
 
 
-       // transform.rotation = Quaternion.Lerp(rotNow, rotSoon, movementSpeed * Time.time);
-      transform.position = Vector3.SmoothDamp(transform.position , posSoon, ref velocity, movementSpeed,1); ;
     }
-
 
     void findFood ()
     { 
@@ -117,22 +145,18 @@ public class Tringle_work : MonoBehaviour {
 
         }
 
-        float totx = closest.transform.position.x - spices.transform.position.x;
-        float toty = closest.transform.position.y - spices.transform.position.y;
-        rotSoon.Set(0, 0, Mathf.Atan2(toty, totx), 0);
-        rotNow = transform.rotation;
+
+
         posSoon = closest.transform.position;
         posNow = transform.position;
-        Debug.Log(posSoon);
-        Debug.Log(rotSoon);
-    }
 
+    }
 
     void OnTriggerEnter(Collider other)
     {
 
-        Destroy(other);
-        Desition = 5;
+        Destroy(other.gameObject);
+        decision = 5;
         foodFound = false;
 
     }
