@@ -12,10 +12,11 @@ public class Tringle_work : MonoBehaviour {
     private Vector3 velocity = Vector3.zero;
     private int continueCommitingChance = 100, StopCommitingChance = 0;
     private float gameTimer = 3.0f;
+    private float age;
 
     GameObject closest = null;
     
-    public int decisionMaking(int eat, int move, int brawl, int reproduce, int dontMove)
+    public int decisionMaking(float eat, float move, float brawl, float reproduce, float dontMove)
     {
        int tempRand = Random.Range(1, 100);
        if(tempRand < eat)
@@ -66,14 +67,15 @@ public class Tringle_work : MonoBehaviour {
 
     void Update()
     {
-        if (gameTimer > 0)
+        if (gameTimer <= 0.0f)
         {
             if (decision == 5)
             {
-                decision = decisionMaking(20, 20, 20, 20, 20);
+                decision = decisionMaking(42.5f, 5, 5, 42.5f, 5);
             }
             else if (decision == 0)
             {
+                Debug.Log("0");
                 //Eat
                 if (foodFound == false)
                 {
@@ -84,25 +86,33 @@ public class Tringle_work : MonoBehaviour {
             else if (decision == 1)
             {
                 //Move
+                Debug.Log("1");
                 decision = 5;
             }
             else if (decision == 2)
             {
                 //Brawl
+                Debug.Log("2");
                 decision = 5;
             }
             else if (decision == 3)
             {
                 //Reproduce
+                Vector3 ogPos = transform.position;
+                Vector3 newPos = new Vector3(Random.Range(1, 5), Random.Range(1, 5), 0);
+                Quaternion rot = new Quaternion(0, 0, 0, 0);
+                Debug.Log("3");
+                Instantiate(spices, ogPos + newPos, rot);
                 decision = 5;
             }
             else if (decision == 4)
             {
                 //Dont Move
+                Debug.Log("4");
                 decision = 5;
             }
 
-            if (decision != 5)
+          /*  if (decision != 5)
             {
                 int commitmentCheck = desistionCommitment(continueCommitingChance, StopCommitingChance);
                 if (commitmentCheck == 0)
@@ -115,14 +125,16 @@ public class Tringle_work : MonoBehaviour {
                     decision = 5;
                 }
             }
-            Debug.Log(decision);
+*/
             gameTimer = 3.0f;
+
         }
-        Debug.Log(gameTimer);
-      gameTimer =- Time.deltaTime;
+
+        gameTimer = gameTimer - Time.deltaTime;
       transform.position = Vector3.SmoothDamp(transform.position , posSoon, ref velocity, movementSpeed,4);
+        age = age + Time.deltaTime;
 
-
+        
     }
 
     void findFood ()
@@ -142,10 +154,7 @@ public class Tringle_work : MonoBehaviour {
                 closest = go;
                 distance = curDistance;
             }
-
         }
-
-
 
         posSoon = closest.transform.position;
         posNow = transform.position;
@@ -158,6 +167,8 @@ public class Tringle_work : MonoBehaviour {
         Destroy(other.gameObject);
         decision = 5;
         foodFound = false;
+        Debug.Log("reset");
+        Debug.Log(gameTimer);
 
     }
 
