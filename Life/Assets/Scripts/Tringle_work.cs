@@ -10,12 +10,15 @@ public class Tringle_work : MonoBehaviour {
     private Vector3 posSoon;
     public float movementSpeed = 0.05f;
     private Vector3 velocity = Vector3.zero;
-    private int continueCommitingChance = 100, StopCommitingChance = 0;
+  //  private int continueCommitingChance = 100, StopCommitingChance = 0;
     private float gameTimer = 3.0f;
     private float age = 0;
     public GameObject cam;
     private float energyMax = 1, energyCur;
     GameObject closest = null;
+    public Renderer rend;
+
+
 
     public int decisionMaking(float eat, float move, float brawl, float reproduce, float dontMove)
     {
@@ -71,7 +74,7 @@ public class Tringle_work : MonoBehaviour {
     {
 
 
-
+        
 
 
         // cam work
@@ -94,14 +97,20 @@ public class Tringle_work : MonoBehaviour {
             }
             if (camfollow)
             {
-                cam.transform.position = transform.position;
+                cam.transform.position = transform.position - new Vector3(0,0,25);
 
             }
         }
 
 
-            if (gameTimer <= 0.0f)
+
+
+
+
+        if (gameTimer <= 0.0f)
             {
+
+            transform.localScale += new Vector3(0.01f, 0.01f, 0);
 
 
             if (energyCur > energyMax)
@@ -117,13 +126,18 @@ public class Tringle_work : MonoBehaviour {
             if (energyMax <= 0 || energyCur <= 0)
             {
                 Destroy(this.gameObject);
+                Debug.Log("DEAD!");
             }
+
+            
+           rend.material.SetColor("_Color",Color.Lerp(Color.red, Color.green, energyCur / energyMax));
             Debug.Log(energyCur);
             Debug.Log(energyMax);
+            Debug.Log(age);
 
 
 
-
+           
 
             if (decision == 5)
                 {
@@ -137,7 +151,7 @@ public class Tringle_work : MonoBehaviour {
                     {
                         findFood();
                         foodFound = true;
-                        energyCur = energyCur - 10;
+                        energyCur = energyCur - 20;
                     }
                 }
                 else if (decision == 1)
@@ -158,17 +172,21 @@ public class Tringle_work : MonoBehaviour {
                     Vector3 ogPos = transform.position;
                     Vector3 newPos = new Vector3(Random.Range(1, 5), Random.Range(1, 5), 0);
                     Quaternion rot = new Quaternion(0, 0, 0, 0);
-                  //  Debug.Log("3");
+                    //  Debug.Log("3");
+                    energyCur = energyCur - 50;
                     Instantiate(spices, ogPos + newPos, rot);
+
                     decision = 5;
-                    energyCur = energyCur - 30;
+
             }
                 else if (decision == 4)
                 {
                     //Dont Move
                     posSoon = transform.position;
+                energyCur = energyCur - 10;
                   //  Debug.Log("4");
                     decision = 5;
+                    
                 }
 
                 /*  if (decision != 5)
@@ -219,12 +237,11 @@ public class Tringle_work : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-
+        Debug.Log("hit!");
         Destroy(other.gameObject);
         decision = 5;
         foodFound = false;
-      //  Debug.Log("reset");
-       // Debug.Log(gameTimer);
+
 
     }
 
