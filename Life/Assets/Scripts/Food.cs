@@ -11,7 +11,7 @@ public class Food : MonoBehaviour {
         timeLeft = timeLeft - Time.deltaTime;
         if (timeLeft < 0)
         {
-            Instantiate(prefab, new Vector3(Random.Range(200.5f, -200.5f), Random.Range(200.0f, -200.0f),-0.3f), Quaternion.identity);
+            Instantiate(prefab, new Vector3(Random.Range(600, -600), Random.Range(300, -300),-0.3f), Quaternion.identity);
             timeLeft = 1.0f;
         }
     }
